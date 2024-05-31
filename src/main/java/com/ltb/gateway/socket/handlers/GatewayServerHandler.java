@@ -1,40 +1,41 @@
-package com.ltb.gateway.session.handlers;
+package com.ltb.gateway.socket.handlers;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.ltb.gateway.bind.IGenericReference;
 import com.ltb.gateway.session.BaseHandler;
-import com.ltb.gateway.session.Configuration;
+import com.ltb.gateway.session.GatewaySession;
+import com.ltb.gateway.session.defaults.DefaultGatewaySessionFactory;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SessionServerHandler extends BaseHandler<FullHttpRequest> {
-    private final Logger logger = LoggerFactory.getLogger(SessionServerHandler.class);
+public class GatewayServerHandler extends BaseHandler<FullHttpRequest> {
 
-    private final Configuration configuration;
+    private final Logger logger = LoggerFactory.getLogger(GatewayServerHandler.class);
 
-    public SessionServerHandler(Configuration configuration){
-        this.configuration = configuration;
+    private final DefaultGatewaySessionFactory gatewaySessionFactory;
+
+    public GatewayServerHandler(DefaultGatewaySessionFactory gatewaySessionFactory) {
+        this.gatewaySessionFactory = gatewaySessionFactory;
     }
 
     @Override
     protected void session(ChannelHandlerContext ctx, Channel channel, FullHttpRequest request) {
-        logger.info("网关接受请求：uri:{} method:{}", request.uri(), request.method());
-        //返回控制信息，简单处理
-        String methodName = request.uri().substring(1);
-        if(methodName.equals("favicon.icl")) return;
+        logger.info("网关接受请求 uri：{} method：{}",request.uri(),request.method());
+        //返回控制信息简单处理
+        String uri = request.uri();
+        if(uri.equals("/favicon.ico")) return;
 
-        //返回信息处理;
+        GatewaySession gatewaySession = gatewaySessionFactory.openSession();
+        IGenericReference reference = gatewaySession.getMapper(uri);
+        String resault = reference.$invoke("sayHi") + " " + System.currentTimeMillis();
+        // 返回信息处理
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
 
-        //服务泛化调用
-        IGenericReference reference = configuration.getGenericReference("sayHi");
-        String resault = reference.$invoke("test") + " " + System.currentTimeMillis();
-
-        //设置回写数据
+        // 设置回写数据
         response.content().writeBytes(JSON.toJSONBytes(resault, SerializerFeature.PrettyFormat));
 
         // 头部信息设置
@@ -53,6 +54,10 @@ public class SessionServerHandler extends BaseHandler<FullHttpRequest> {
 
         channel.writeAndFlush(response);
 
-
     }
 }
+
+
+
+
+

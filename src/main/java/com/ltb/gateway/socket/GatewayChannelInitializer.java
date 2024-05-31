@@ -1,6 +1,7 @@
-package com.ltb.gateway.session;
+package com.ltb.gateway.socket;
 
-import com.ltb.gateway.session.handlers.SessionServerHandler;
+import com.ltb.gateway.session.defaults.DefaultGatewaySessionFactory;
+import com.ltb.gateway.socket.handlers.GatewayServerHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -8,12 +9,16 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 
-public class SessionChannelInitializer extends ChannelInitializer<SocketChannel> {
+/**
+ * 会话管道初始化类
+ *
+ * @author leetao
+ */
+public class GatewayChannelInitializer extends ChannelInitializer<SocketChannel> {
+    private final DefaultGatewaySessionFactory gatewaySessionFactory;
 
-    private final Configuration configuration;
-
-    public SessionChannelInitializer(Configuration configuration){
-        this.configuration = configuration;
+    public GatewayChannelInitializer(DefaultGatewaySessionFactory gatewaySessionFactory) {
+        this.gatewaySessionFactory = gatewaySessionFactory;
     }
 
     @Override
@@ -22,6 +27,7 @@ public class SessionChannelInitializer extends ChannelInitializer<SocketChannel>
         line.addLast(new HttpRequestDecoder());
         line.addLast(new HttpResponseEncoder());
         line.addLast(new HttpObjectAggregator(1024 * 1024));
-        line.addLast(new SessionServerHandler(configuration));
+        line.addLast(new GatewayServerHandler(gatewaySessionFactory));
     }
+
 }
