@@ -3,7 +3,7 @@ package com.ltb.gateway.socket.handlers;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.ltb.gateway.bind.IGenericReference;
-import com.ltb.gateway.session.BaseHandler;
+import com.ltb.gateway.socket.BaseHandler;
 import com.ltb.gateway.session.GatewaySession;
 import com.ltb.gateway.session.defaults.DefaultGatewaySessionFactory;
 import io.netty.channel.Channel;
@@ -29,8 +29,8 @@ public class GatewayServerHandler extends BaseHandler<FullHttpRequest> {
         String uri = request.uri();
         if(uri.equals("/favicon.ico")) return;
 
-        GatewaySession gatewaySession = gatewaySessionFactory.openSession();
-        IGenericReference reference = gatewaySession.getMapper(uri);
+        GatewaySession gatewaySession = gatewaySessionFactory.openSession(uri);
+        IGenericReference reference = gatewaySession.getMapper();
         String resault = reference.$invoke("sayHi") + " " + System.currentTimeMillis();
         // 返回信息处理
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);

@@ -9,9 +9,9 @@ import com.ltb.gateway.bind.IGenericReference;
  */
 public interface GatewaySession {
 
-    Object get(String uri,Object args);
+    Object get(String methodName,Object parameter);
 
-    IGenericReference getMapper(String uri);
+    IGenericReference getMapper();
 
     Configuration getConfiguration();
 }

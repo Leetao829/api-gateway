@@ -13,12 +13,12 @@ import java.lang.reflect.Method;
  */
 public class MapperMethod {
 
-    private String uri;
+    private String methodName;
 
     private final HttpCommandType type;
 
     public MapperMethod(String uri, Method method, Configuration configuration){
-        this.uri = uri;
+        this.methodName = configuration.getHttpStatement(uri).getMethodName();
         this.type = configuration.getHttpStatement(uri).getHttpCommandType();
     }
 
@@ -26,7 +26,7 @@ public class MapperMethod {
         Object result = null;
         switch (type){
             case GET:
-                result = session.get(uri,args);
+                result = session.get(methodName,args);
                 break;
             case POST:
                 break;

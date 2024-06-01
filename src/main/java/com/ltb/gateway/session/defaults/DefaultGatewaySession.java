@@ -1,6 +1,8 @@
 package com.ltb.gateway.session.defaults;
 
 import com.ltb.gateway.bind.IGenericReference;
+import com.ltb.gateway.datasource.Connection;
+import com.ltb.gateway.datasource.DataSource;
 import com.ltb.gateway.mapping.HttpStatement;
 import com.ltb.gateway.session.Configuration;
 import com.ltb.gateway.session.GatewaySession;
@@ -19,34 +21,24 @@ import org.apache.dubbo.rpc.service.GenericService;
 public class DefaultGatewaySession implements GatewaySession {
 
     private final Configuration configuration;
+    private String uri;
+    private DataSource dataSource;
 
-    public DefaultGatewaySession(Configuration configuration){
+    public DefaultGatewaySession(Configuration configuration,String uri,DataSource dataSource){
         this.configuration = configuration;
+        this.uri = uri;
+        this.dataSource = dataSource;
     }
 
 
     @Override
-    public Object get(String uri, Object args) {
-        /**
-         * 以后这部分内容，在执行器中进行处理
-         */
-        HttpStatement httpStatement = configuration.getHttpStatement(uri);
-        String application = httpStatement.getApplication();
-        String interfaceName = httpStatement.getInterfaceName();
-        //获取基础服务
-        ApplicationConfig applicationConfig = configuration.getApplicationConfig(application);
-        RegistryConfig registryConfig = configuration.getRegistryConfig(application);
-        ReferenceConfig<GenericService> referenceConfig = configuration.getReferenceConfig(interfaceName);
-        //构建dubbo服务
-        DubboBootstrap bootstrap = DubboBootstrap.getInstance();
-        bootstrap.application(applicationConfig).registry(registryConfig).reference(referenceConfig);
-        ReferenceConfigCache cache = ReferenceConfigCache.getCache();
-        GenericService genericService = cache.get(referenceConfig);
-        return genericService.$invoke(httpStatement.getMethodName(), new String[]{"java.lang.String"},new Object[]{"李涛"});
+    public Object get(String methodName, Object parameter) {
+        Connection connection = dataSource.getConnection();
+        return connection.execute(methodName,new String[]{"java.lang.String"},new String[]{"name"},new Object[]{parameter});
     }
 
     @Override
-    public IGenericReference getMapper(String uri) {
+    public IGenericReference getMapper() {
         return configuration.getMapper(uri,this);
     }
 
