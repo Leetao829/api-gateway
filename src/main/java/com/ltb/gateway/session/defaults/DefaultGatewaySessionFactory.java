@@ -11,6 +11,8 @@ import com.ltb.gateway.session.GatewaySessionFactory;
  * 默认网关会话工厂
  *
  * @author leetao
+ *
+ * @author leetao
  */
 public class DefaultGatewaySessionFactory implements GatewaySessionFactory {
 
