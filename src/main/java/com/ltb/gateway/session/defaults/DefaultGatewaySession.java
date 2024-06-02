@@ -3,6 +3,7 @@ package com.ltb.gateway.session.defaults;
 import com.ltb.gateway.bind.IGenericReference;
 import com.ltb.gateway.datasource.Connection;
 import com.ltb.gateway.datasource.DataSource;
+import com.ltb.gateway.executor.Executor;
 import com.ltb.gateway.mapping.HttpStatement;
 import com.ltb.gateway.session.Configuration;
 import com.ltb.gateway.session.GatewaySession;
@@ -19,22 +20,23 @@ public class DefaultGatewaySession implements GatewaySession {
 
     private final Configuration configuration;
     private String uri;
-    private DataSource dataSource;
+    private Executor executor;
 
-    public DefaultGatewaySession(Configuration configuration,String uri,DataSource dataSource){
+    public DefaultGatewaySession(Configuration configuration,String uri,Executor executor){
         this.configuration = configuration;
         this.uri = uri;
-        this.dataSource = dataSource;
+        this.executor = executor;
     }
 
 
     @Override
     public Object get(String methodName, Map<String,Object> params) {
-        Connection connection = dataSource.getConnection();
         HttpStatement httpStatement = configuration.getHttpStatement(uri);
-        String parameterType = httpStatement.getParameterType();
-        return connection.execute(methodName,new String[]{parameterType},new String[]{"ignore"},
-                SimpleTypeRegistry.isSimpleType(parameterType) ? params.values().toArray() : new Object[]{params});
+        try {
+            return executor.exec(httpStatement,params);
+        } catch (Exception e) {
+            throw new RuntimeException("Error exec get. Cause:"+e);
+        }
     }
 
     @Override

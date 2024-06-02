@@ -2,6 +2,9 @@ package com.ltb.gateway.session;
 
 import com.ltb.gateway.bind.IGenericReference;
 import com.ltb.gateway.bind.MapperRegistry;
+import com.ltb.gateway.datasource.Connection;
+import com.ltb.gateway.executor.Executor;
+import com.ltb.gateway.executor.SimpleExecutor;
 import com.ltb.gateway.mapping.HttpStatement;
 import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.ReferenceConfig;
@@ -75,5 +78,9 @@ public class Configuration {
 
     public HttpStatement getHttpStatement(String uri){
         return httpStatements.get(uri);
+    }
+
+    public Executor newExecutor(Connection connection){
+        return new SimpleExecutor(this,connection);
     }
 }
