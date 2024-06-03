@@ -1,6 +1,6 @@
 package com.ltb.gateway.executor;
 
-import com.ltb.gateway.executor.result.GatewayResult;
+import com.ltb.gateway.executor.result.SessionResult;
 import com.ltb.gateway.mapping.HttpStatement;
 import java.util.Map;
 
@@ -11,5 +11,5 @@ import java.util.Map;
  */
 public interface Executor {
 
-    GatewayResult exec(HttpStatement httpStatement, Map<String,Object> params) throws Exception;
+    SessionResult exec(HttpStatement httpStatement, Map<String,Object> params) throws Exception;
 }

@@ -1,5 +1,7 @@
 package com.ltb.gateway.bind;
 
+import com.ltb.gateway.executor.result.SessionResult;
+
 import java.util.Map;
 
 /**
@@ -9,5 +11,5 @@ import java.util.Map;
  */
 public interface IGenericReference {
 
-    Object $invoke(Map<String,Object> params);
+    SessionResult $invoke(Map<String,Object> params);
 }

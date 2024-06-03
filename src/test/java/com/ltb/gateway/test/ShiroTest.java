@@ -1,7 +1,9 @@
 package com.ltb.gateway.test;
 
 
+import com.ltb.gateway.authorization.IAuth;
 import com.ltb.gateway.authorization.JwtUtil;
+import com.ltb.gateway.authorization.auth.AuthService;
 import io.jsonwebtoken.Claims;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -31,6 +33,13 @@ public class ShiroTest {
         System.out.println(token);
         Claims parser = JwtUtil.decode(token);
         System.out.println(parser);
+    }
+
+    @Test
+    public void test_auth_service(){
+        IAuth auth = new AuthService();
+        boolean validate = auth.validate("leetao", "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsZWV0YW8iLCJleHAiOjE3MTc5OTMxMDAsImlhdCI6MTcxNzM4ODMwMCwia2V5IjoibGVldGFvIn0.DJ7HJ9Btf8sZPBV-p806bhx7RIkOcwxeT3Wtz88lHQg");
+        System.out.println(validate ? "验证成功" : "验证失败");
     }
 
     @Test

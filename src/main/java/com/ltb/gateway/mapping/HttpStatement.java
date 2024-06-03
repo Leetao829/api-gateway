@@ -19,14 +19,17 @@ public class HttpStatement {
     private String uri;
     //请求类型
     private HttpCommandType httpCommandType;
+    //是否需要鉴权
+    private boolean auth;
 
-    public HttpStatement(String application,String interfaceName,String methodName,String parameterType,String uri,HttpCommandType httpCommandType){
+    public HttpStatement(String application,String interfaceName,String methodName,String parameterType,String uri,HttpCommandType httpCommandType,boolean auth){
         this.application = application;
         this.methodName = methodName;
         this.interfaceName = interfaceName;
         this.uri = uri;
         this.httpCommandType = httpCommandType;
         this.parameterType = parameterType;
+        this.auth = auth;
     }
 
     public HttpCommandType getHttpCommandType() {
@@ -51,5 +54,9 @@ public class HttpStatement {
 
     public String getParameterType() {
         return parameterType;
+    }
+
+    public boolean isAuth() {
+        return auth;
     }
 }

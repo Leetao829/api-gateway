@@ -18,25 +18,11 @@ public class ApiTest {
 
     private final Logger logger = LoggerFactory.getLogger(ApiTest.class);
 
-    /**
-     * 测试：
-     * http://localhost:7397/wg/activity/sayHi
-     * 参数：
-     * {
-     *     "str": "10001"
-     * }
-     *
-     * http://localhost:7397/wg/activity/index
-     * 参数：
-     * {
-     *     "name":"小傅哥",
-     *     "uid":"10001"
-     * }
-     */
     @Test
     public void test_gateway() throws InterruptedException, ExecutionException {
         // 1. 创建配置信息加载注册
         Configuration configuration = new Configuration();
+        configuration.registryConfig("api-gateway-test","zookeeper://127.0.0.1:2181","com.ltb.gateway.rpc.IActivityBooth","1.0.0");
 
         HttpStatement httpStatement01 = new HttpStatement(
                 "api-gateway-test",
@@ -44,7 +30,8 @@ public class ApiTest {
                 "sayHi",
                 "java.lang.String",
                 "/wg/activity/sayHi",
-                HttpCommandType.GET);
+                HttpCommandType.GET,
+                false);
 
         HttpStatement httpStatement02 = new HttpStatement(
                 "api-gateway-test",
@@ -52,7 +39,8 @@ public class ApiTest {
                 "insert",
                 "com.ltb.gateway.rpc.dto.XReq",
                 "/wg/activity/insert",
-                HttpCommandType.POST);
+                HttpCommandType.POST,
+                true);
 
         configuration.addMapper(httpStatement01);
         configuration.addMapper(httpStatement02);
@@ -61,7 +49,7 @@ public class ApiTest {
         DefaultGatewaySessionFactory gatewaySessionFactory = new DefaultGatewaySessionFactory(configuration);
 
         // 3. 创建启动网关网络服务
-        GatewaySocketServer server = new GatewaySocketServer(gatewaySessionFactory);
+        GatewaySocketServer server = new GatewaySocketServer(configuration,gatewaySessionFactory);
 
         Future<Channel> future = Executors.newFixedThreadPool(2).submit(server);
         Channel channel = future.get();

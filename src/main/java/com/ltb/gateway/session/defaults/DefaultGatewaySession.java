@@ -1,14 +1,10 @@
 package com.ltb.gateway.session.defaults;
 
 import com.ltb.gateway.bind.IGenericReference;
-import com.ltb.gateway.datasource.Connection;
-import com.ltb.gateway.datasource.DataSource;
 import com.ltb.gateway.executor.Executor;
 import com.ltb.gateway.mapping.HttpStatement;
 import com.ltb.gateway.session.Configuration;
 import com.ltb.gateway.session.GatewaySession;
-import com.ltb.gateway.type.SimpleTypeRegistry;
-
 import java.util.Map;
 
 /**

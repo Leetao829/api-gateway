@@ -37,7 +37,7 @@ public class RPCTest {
 
         Object result = genericService.$invoke("sayHi", new String[]{"java.lang.String"}, new Object[]{"world"});
 
-        System.out.println(result);
+        System.out.println("调用结果为："+result);
     }
 
 }

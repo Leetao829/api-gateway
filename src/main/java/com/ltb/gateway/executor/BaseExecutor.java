@@ -2,7 +2,7 @@ package com.ltb.gateway.executor;
 
 import com.alibaba.fastjson.JSON;
 import com.ltb.gateway.datasource.Connection;
-import com.ltb.gateway.executor.result.GatewayResult;
+import com.ltb.gateway.executor.result.SessionResult;
 import com.ltb.gateway.mapping.HttpStatement;
 import com.ltb.gateway.session.Configuration;
 import com.ltb.gateway.type.SimpleTypeRegistry;
@@ -23,7 +23,7 @@ public abstract class BaseExecutor implements Executor{
     }
 
     @Override
-    public GatewayResult exec(HttpStatement httpStatement, Map<String, Object> params) {
+    public SessionResult exec(HttpStatement httpStatement, Map<String, Object> params) {
         //参数处理，后续的一些参数校验也可以在这里进行封装
         String methodName = httpStatement.getMethodName();
         String parameterType = httpStatement.getParameterType();
@@ -31,7 +31,7 @@ public abstract class BaseExecutor implements Executor{
         Object[] args = SimpleTypeRegistry.isSimpleType(parameterType) ? params.values().toArray() : new Object[]{params};
         logger.info("执行调用 method：{}#{}.{}({}) args：{}", httpStatement.getApplication(), httpStatement.getInterfaceName(), httpStatement.getMethodName(), JSON.toJSONString(parameterTypes), JSON.toJSONString(args));
         Object data = doExec(methodName,parameterTypes,args);
-        return GatewayResult.buildSuccess(data);
+        return SessionResult.buildSuccess(data);
     }
 
 

@@ -10,7 +10,7 @@ import io.netty.handler.codec.http.*;
  */
 public class ResponseParser {
 
-    public DefaultFullHttpResponse parse(Object result) {
+    public DefaultFullHttpResponse parse(GatewayResultMessage result) {
         // 返回信息处理
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
         // 设置回写数据
@@ -29,6 +29,7 @@ public class ResponseParser {
         heads.add(HttpHeaderNames.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, PUT, DELETE");
         heads.add(HttpHeaderNames.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
         return response;
+
     }
 
 }

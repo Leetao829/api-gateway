@@ -1,5 +1,7 @@
 package com.ltb.gateway.session;
 
+import com.ltb.gateway.authorization.IAuth;
+import com.ltb.gateway.authorization.auth.AuthService;
 import com.ltb.gateway.bind.IGenericReference;
 import com.ltb.gateway.bind.MapperRegistry;
 import com.ltb.gateway.datasource.Connection;
@@ -25,62 +27,77 @@ public class Configuration {
 
     private final Map<String, HttpStatement> httpStatements = new HashMap<>();
 
-    //Rpc 应用服务配置项
+    private final IAuth auth = new AuthService();
+
+    // RPC 应用服务配置项 api-gateway-test
     private final Map<String, ApplicationConfig> applicationConfigMap = new HashMap<>();
-    //Rpc注册中心配置项
+    // RPC 注册中心配置项 zookeeper://127.0.0.1:2181
     private final Map<String, RegistryConfig> registryConfigMap = new HashMap<>();
-    //Rpc 泛化服务配置项
+    // RPC 泛化服务配置项 cn.bugstack.gateway.rpc.IActivityBooth
     private final Map<String, ReferenceConfig<GenericService>> referenceConfigMap = new HashMap<>();
 
-    public Configuration(){
-        //TODO 后期从配置项中获取
-        ApplicationConfig application = new ApplicationConfig();
-        application.setName("api-gateway-test");
-        application.setQosEnable(false);
-
-        RegistryConfig registry = new RegistryConfig();
-        registry.setAddress("zookeeper://127.0.0.1:2181");
-        registry.setRegister(false);
-
-        ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
-        reference.setInterface("com.ltb.gateway.rpc.IActivityBooth");
-        reference.setVersion("1.0.0");
-        reference.setGeneric("true");
-
-        applicationConfigMap.put("api-gateway-test",application);
-        registryConfigMap.put("api-gateway-test",registry);
-        referenceConfigMap.put("com.ltb.gateway.rpc.IActivityBooth",reference);
+    public Configuration() {
     }
 
-    public ApplicationConfig getApplicationConfig(String applicationName){
+    public synchronized void registryConfig(String applicationName, String address, String interfaceName, String version) {
+        if (applicationConfigMap.get(applicationName) == null) {
+            ApplicationConfig application = new ApplicationConfig();
+            application.setName(applicationName);
+            application.setQosEnable(false);
+            applicationConfigMap.put(applicationName, application);
+        }
+
+        if (registryConfigMap.get(applicationName) == null) {
+            RegistryConfig registry = new RegistryConfig();
+            registry.setAddress(address);
+            registry.setRegister(false);
+            registryConfigMap.put(applicationName, registry);
+        }
+
+        if (referenceConfigMap.get(interfaceName) == null) {
+            ReferenceConfig<GenericService> reference = new ReferenceConfig<>();
+            reference.setInterface(interfaceName);
+            reference.setVersion(version);
+            reference.setGeneric("true");
+            referenceConfigMap.put(interfaceName, reference);
+        }
+    }
+
+
+    public ApplicationConfig getApplicationConfig(String applicationName) {
         return applicationConfigMap.get(applicationName);
     }
 
-    public RegistryConfig getRegistryConfig(String applicationName){
+    public RegistryConfig getRegistryConfig(String applicationName) {
         return registryConfigMap.get(applicationName);
     }
 
-    public ReferenceConfig<GenericService> getReferenceConfig(String interfaceName){
+    public ReferenceConfig<GenericService> getReferenceConfig(String interfaceName) {
         return referenceConfigMap.get(interfaceName);
     }
 
-    public void addMapper(HttpStatement httpStatement){
+    public void addMapper(HttpStatement httpStatement) {
         mapperRegistry.addMapper(httpStatement);
     }
 
-    public IGenericReference getMapper(String uri,GatewaySession gatewaySession){
-        return mapperRegistry.getMapper(uri,gatewaySession);
+    public IGenericReference getMapper(String uri, GatewaySession gatewaySession) {
+        return mapperRegistry.getMapper(uri, gatewaySession);
     }
 
-    public void addHttpStatement(HttpStatement httpStatement){
-        httpStatements.put(httpStatement.getUri(),httpStatement);
+    public void addHttpStatement(HttpStatement httpStatement) {
+        httpStatements.put(httpStatement.getUri(), httpStatement);
     }
 
-    public HttpStatement getHttpStatement(String uri){
+    public HttpStatement getHttpStatement(String uri) {
         return httpStatements.get(uri);
     }
 
-    public Executor newExecutor(Connection connection){
-        return new SimpleExecutor(this,connection);
+    public Executor newExecutor(Connection connection) {
+        return new SimpleExecutor(this, connection);
     }
+
+    public boolean authValidate(String uId, String token) {
+        return auth.validate(uId, token);
+    }
+
 }
