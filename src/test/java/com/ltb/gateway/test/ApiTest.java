@@ -1,10 +1,10 @@
 package com.ltb.gateway.test;
 
-import com.ltb.gateway.mapping.HttpCommandType;
-import com.ltb.gateway.mapping.HttpStatement;
-import com.ltb.gateway.session.Configuration;
-import com.ltb.gateway.session.defaults.DefaultGatewaySessionFactory;
-import com.ltb.gateway.socket.GatewaySocketServer;
+import com.ltb.gateway.core.mapping.HttpCommandType;
+import com.ltb.gateway.core.mapping.HttpStatement;
+import com.ltb.gateway.core.session.Configuration;
+import com.ltb.gateway.core.session.defaults.DefaultGatewaySessionFactory;
+import com.ltb.gateway.core.socket.GatewaySocketServer;
 import io.netty.channel.Channel;
 import org.junit.Test;
 import org.slf4j.Logger;

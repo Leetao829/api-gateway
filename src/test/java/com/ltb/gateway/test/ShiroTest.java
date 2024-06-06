@@ -1,9 +1,9 @@
 package com.ltb.gateway.test;
 
 
-import com.ltb.gateway.authorization.IAuth;
-import com.ltb.gateway.authorization.JwtUtil;
-import com.ltb.gateway.authorization.auth.AuthService;
+import com.ltb.gateway.core.authorization.IAuth;
+import com.ltb.gateway.core.authorization.JwtUtil;
+import com.ltb.gateway.core.authorization.auth.AuthService;
 import io.jsonwebtoken.Claims;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
