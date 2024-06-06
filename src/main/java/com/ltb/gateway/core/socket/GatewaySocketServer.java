@@ -27,13 +27,19 @@ public class GatewaySocketServer implements Callable<Channel> {
     private Configuration configuration;
     private DefaultGatewaySessionFactory gatewaySessionFactory;
 
-    private final EventLoopGroup boss = new NioEventLoopGroup(1);
-    private final EventLoopGroup work = new NioEventLoopGroup();
+    private EventLoopGroup boss;
+    private EventLoopGroup work;
     private Channel channel;
 
     public GatewaySocketServer(Configuration configuration, DefaultGatewaySessionFactory gatewaySessionFactory) {
         this.configuration = configuration;
         this.gatewaySessionFactory = gatewaySessionFactory;
+        initEventLoopGroup();
+    }
+
+    public void initEventLoopGroup(){
+        boss = new NioEventLoopGroup(configuration.getBossNThreads());
+        work = new NioEventLoopGroup(configuration.getWorkNThreads());
     }
 
     @Override
@@ -46,7 +52,7 @@ public class GatewaySocketServer implements Callable<Channel> {
                     .option(ChannelOption.SO_BACKLOG, 128)
                     .childHandler(new GatewayChannelInitializer(configuration,gatewaySessionFactory));
 
-            channelFuture = b.bind(new InetSocketAddress(7397)).syncUninterruptibly();
+            channelFuture = b.bind(new InetSocketAddress(configuration.getHostName(),configuration.getPort())).syncUninterruptibly();
             this.channel = channelFuture.channel();
         } catch (Exception e) {
             logger.error("socket server start error.", e);

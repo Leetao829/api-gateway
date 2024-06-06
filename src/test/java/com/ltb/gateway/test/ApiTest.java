@@ -23,6 +23,8 @@ public class ApiTest {
         // 1. 创建配置信息加载注册
         Configuration configuration = new Configuration();
         configuration.registryConfig("api-gateway-test","zookeeper://127.0.0.1:2181","com.ltb.gateway.rpc.IActivityBooth","1.0.0");
+        configuration.setPort(7397);
+        configuration.setHostName("127.0.0.1");
 
         HttpStatement httpStatement01 = new HttpStatement(
                 "api-gateway-test",

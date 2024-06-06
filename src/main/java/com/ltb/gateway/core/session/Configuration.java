@@ -23,6 +23,14 @@ import java.util.Map;
  */
 public class Configuration {
 
+    //网关netty服务地址
+    private String hostName = "127.0.0.1";
+    //网关netty服务端口
+    private int port = 7397;
+    //线程配置
+    private int bossNThreads = 1;
+    private int workNThreads = 4;
+
     private final MapperRegistry mapperRegistry = new MapperRegistry(this);
 
     private final Map<String, HttpStatement> httpStatements = new HashMap<>();
@@ -100,4 +108,35 @@ public class Configuration {
         return auth.validate(uId, token);
     }
 
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public int getBossNThreads() {
+        return bossNThreads;
+    }
+
+    public void setBossNThreads(int bossNThreads) {
+        this.bossNThreads = bossNThreads;
+    }
+
+    public int getWorkNThreads() {
+        return workNThreads;
+    }
+
+    public void setWorkNThreads(int workNThreads) {
+        this.workNThreads = workNThreads;
+    }
 }
